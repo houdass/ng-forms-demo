@@ -1,9 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 interface Gender {
   id: number;
   label: string;
+}
+
+interface User {
+  name: string;
+  email: string;
+  gender: string;
 }
 
 @Component({
@@ -12,21 +18,39 @@ interface Gender {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  userForm: FormGroup;
+  @ViewChild('f') userForm: NgForm;
   genders: Array<Gender>;
 
-  constructor(private fb: FormBuilder) {}
+  defaultGender: Gender;
+  defaultName = 'Angular';
+  data: User;
+  submitted: boolean;
 
   ngOnInit() {
     this.genders = [{ id: 0, label: 'Female' }, { id: 1, label: 'Male' }];
-    this.userForm = this.fb.group({
-      name: this.fb.control(''),
-      email: this.fb.control(''),
-      gender: this.fb.control('')
-    });
+    this.defaultGender = this.genders[0];
   }
 
   onSubmit() {
-    console.log(this.userForm.value);
+    this.data = {
+      name: this.userForm.value.user.name,
+      email: this.userForm.value.user.email,
+      gender: this.userForm.value.gender.label
+    };
+    this.submitted = true;
+  }
+
+  setForm() {
+    /* this.userForm.setValue({
+      user: { name: 'Youness', email: 'houd.youness@gmail.com' },
+      gender: this.genders[1]
+    }); */
+    this.userForm.form.patchValue({
+      user: { name: 'Youness' }
+    });
+  }
+
+  resetForm() {
+    this.userForm.reset();
   }
 }
